@@ -1,7 +1,7 @@
 # 3x-ui для Keenetic ARM64 / Entware
 
 Адаптированная версия **3x-ui v3.11.0** для роутеров Keenetic с архитектурой **ARM64 (aarch64)** и установленным **Entware**.
-Протестировано на Keenetic Ultra (KN-1811) EAEU
+Протестировано на Keenetic Ultra (KN-1811) EAEU.
 
 ## Установка
 
