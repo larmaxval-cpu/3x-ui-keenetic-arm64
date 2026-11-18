@@ -774,21 +774,45 @@ start() {
 }
 
 stop() {
-    check_status; local status=$?
-    if [[ $status == 1 ]]; then
-        echo ""
-        logmsg "${color_green}${ICO_MAP[INF]} $SHELL_SHORT_NAME stopped, no need to stop again!${style_plain}"
-    else
-        if killall $DIR_PROJECT/$NAME_APP 2>/dev/null; then
-            killall -q -KILL $DIR_PROJECT/$NAME_APP
-            logmsg "${ICO_MAP[GOOD]} $SHELL_SHORT_NAME stopped"
-        else
-            logmsg "${ICO_MAP[GOOD]} $SHELL_SHORT_NAME was already stopped!"
-        fi
-        sleep 2
-        check_status; local status2=$?
-        [[ $status2 == 1 ]] && logmsg "${color_green}${ICO_MAP[INF]} $SHELL_SHORT_NAME stopped successfully${style_plain}" || logmsg "${color_red}${ICO_MAP[ERR]}failed to stop $SHELL_SHORT_NAME, probably because the stop time exceeds two seconds, please check the log information later${style_plain}"
+    check_status
+    if [[ $? == 1 ]]; then
+        logmsg "${ICO_MAP[INF]} $SHELL_SHORT_NAME already stopped"
+        return 0
     fi
+
+    local pids
+    pids=$(/opt/bin/pidof "$NAME_APP")
+
+    if [[ -z "$pids" ]]; then
+        logmsg "${ICO_MAP[ERR]} Cannot determine $NAME_APP PID"
+        return 1
+    fi
+
+    logmsg "${ICO_MAP[INF]} Stopping $SHELL_SHORT_NAME (PID: $pids)"
+
+    kill -TERM $pids 2>/dev/null
+
+    local i
+    for ((i=0; i<5; i++)); do
+        sleep 1
+        if ! check_panel; then
+            logmsg "${ICO_MAP[INF]} $SHELL_SHORT_NAME stopped successfully"
+            return 0
+        fi
+    done
+
+    logmsg "${ICO_MAP[ERR]} Graceful stop timed out, sending SIGKILL"
+    pids=$(/opt/bin/pidof "$NAME_APP")
+    [[ -n "$pids" ]] && kill -KILL $pids 2>/dev/null
+
+    sleep 1
+    if check_panel; then
+        logmsg "${ICO_MAP[ERR]} Failed to stop $SHELL_SHORT_NAME"
+        return 1
+    fi
+
+    logmsg "${ICO_MAP[INF]} $SHELL_SHORT_NAME stopped successfully"
+    return 0
 }
 
 is_enabled() {
@@ -990,7 +1014,7 @@ ssl() {
 }
 
 check_panel() {
-    pgrep -f $NAME_APP > /dev/null
+    /opt/bin/pidof "$NAME_APP" > /dev/null 2>&1
 }
 
 is-enabled() {
