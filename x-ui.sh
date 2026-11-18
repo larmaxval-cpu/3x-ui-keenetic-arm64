@@ -758,7 +758,7 @@ start() {
         logmsg "${color_green}${ICO_MAP[INF]} $SHELL_SHORT_NAME is running, no need to start again!${style_plain}"
     else
         tmpfile=$(mktemp)
-        nice -n -19 "$DIR_PROJECT/$NAME_APP" run >"$tmpfile" 2>&1 & disown
+        "$DIR_PROJECT/$NAME_APP" run >"$tmpfile" 2>&1 & disown
         output=$(cat "$tmpfile")
         echo "$output" >> "$DIR_LOGFILE"
         rm -f "$tmpfile"
@@ -781,7 +781,7 @@ stop() {
     fi
 
     local pids
-    pids=$(/opt/bin/pidof "$NAME_APP")
+    pids=$(pidof "$NAME_APP")
 
     if [[ -z "$pids" ]]; then
         logmsg "${ICO_MAP[ERR]} Cannot determine $NAME_APP PID"
@@ -802,7 +802,7 @@ stop() {
     done
 
     logmsg "${ICO_MAP[ERR]} Graceful stop timed out, sending SIGKILL"
-    pids=$(/opt/bin/pidof "$NAME_APP")
+    pids=$(pidof "$NAME_APP")
     [[ -n "$pids" ]] && kill -KILL $pids 2>/dev/null
 
     sleep 1
@@ -1014,7 +1014,7 @@ ssl() {
 }
 
 check_panel() {
-    /opt/bin/pidof "$NAME_APP" > /dev/null 2>&1
+    pidof "$NAME_APP" > /dev/null 2>&1
 }
 
 is-enabled() {
