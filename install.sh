@@ -19,7 +19,7 @@ trap cleanup EXIT HUP INT TERM
 [ ! -e /opt/bin/x-ui ] && [ ! -L /opt/bin/x-ui ] || fail 'Existing x-ui command found; no changes made'
 # Required packages, including the shell used by the known Keenetic management script.
 opkg update
-opkg install bash curl ca-bundle ca-certificates unzip coreutils coreutils-sha256sum || fail 'Cannot install dependencies'
+opkg install bash curl libcurl ca-bundle ca-certificates unzip coreutils coreutils-sha256sum || fail 'Cannot install dependencies'
 for cmd in curl sha256sum unzip bash; do command -v "$cmd" >/dev/null 2>&1 || fail "Missing $cmd"; done
 mkdir -p /opt/tmp
 TMP=$(mktemp -d /opt/tmp/xui-install.XXXXXX) || fail 'Cannot create temp dir'
@@ -47,11 +47,11 @@ for f in geoip.dat geosite.dat; do
 done
 # Do not create the application directory until all required downloads are complete.
 mkdir -p "$DIR/bin" "$DIR/db" "$DIR/cache" "$DIR/config"
-cp "$TMP/xui" "$DIR/xui" && chmod 755 "$DIR/xui"
-cp "$TMP/x-ui.sh" "$DIR/x-ui.sh" && chmod 755 "$DIR/x-ui.sh"
-cp "$TMP/xray/xray" "$DIR/bin/xray-linux-arm64" && chmod 755 "$DIR/bin/xray-linux-arm64"
-cp "$TMP/xray/geoip.dat" "$DIR/bin/geoip.dat" && chmod 644 "$DIR/bin/geoip.dat"
-cp "$TMP/xray/geosite.dat" "$DIR/bin/geosite.dat" && chmod 644 "$DIR/bin/geosite.dat"
+install -m 755 "$TMP/xui" "$DIR/xui"
+install -m 755 "$TMP/x-ui.sh" "$DIR/x-ui.sh"
+install -m 755 "$TMP/xray/xray" "$DIR/bin/xray-linux-arm64"
+install -m 644 "$TMP/xray/geoip.dat" "$DIR/bin/geoip.dat"
+install -m 644 "$TMP/xray/geosite.dat" "$DIR/bin/geosite.dat"
 ln -s "$DIR/x-ui.sh" /opt/etc/init.d/S99x-ui
 ln -s "$DIR/x-ui.sh" /opt/bin/x-ui
 printf '\nFiles installed. Initial panel settings and service startup have NOT been validated.\n'
