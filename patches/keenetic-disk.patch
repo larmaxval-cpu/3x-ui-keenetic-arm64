@@ -1,0 +1,15 @@
+--- a/internal/web/service/server.go
++++ b/internal/web/service/server.go
+@@ -644,7 +644,11 @@
+ 	}
+ 
+ 	// Disk stats
+-	diskInfo, err := disk.Usage("/")
++	diskPath := os.Getenv("XUI_DISK_PATH")
++	if diskPath == "" {
++		diskPath = "/"
++	}
++	diskInfo, err := disk.Usage(diskPath)
+ 	if err != nil {
+ 		logger.Warning("get disk usage failed:", err)
+ 	} else {

@@ -1,0 +1,13 @@
+--- a/internal/web/service/xray.go
++++ b/internal/web/service/xray.go
+@@ -1523,7 +1523,9 @@
+ 		}
+ 		invalidateTuicRelayReadiness(process.GetConfig())
+ 		invalidateTuicRelayReadiness(xrayConfig)
+-		_ = process.Stop()
++		if err := process.Stop(); err != nil {
++			return fmt.Errorf("failed to stop previous Xray process: %w", err)
++		}
+ 	} else if conflicts := bindConflicts(xrayConfig, nil); len(conflicts) > 0 {
+ 		// Nothing is running to protect and the core is the authority on what it
+ 		// can bind: start it and let its own error name the port it lost.
