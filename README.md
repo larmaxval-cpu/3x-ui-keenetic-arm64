@@ -1,30 +1,47 @@
 # 3x-ui для Keenetic ARM64 / Entware
 
-Адаптированная версия **3x-ui v3.11.0** для роутеров Keenetic с архитектурой ARM64 и установленным Entware.
+Адаптированная версия **3x-ui v3.11.0** для роутеров Keenetic с архитектурой **ARM64 (aarch64)** и установленным **Entware**.
 
 ## Установка
+
+> **Экспериментальный установщик.** Полный цикл установки на чистом Entware пока не проверен. Скрипт предназначен для новой установки; **не запускайте его поверх работающей панели 3x-ui**.
+
+Подключитесь к Keenetic по SSH и выполните:
 
 ```sh
 opkg update
 opkg install bash curl unzip coreutils
+mkdir -p /opt/tmp
 curl -fsSL https://raw.githubusercontent.com/larmaxval-cpu/3x-ui-keenetic-arm64/main/install.sh -o /opt/tmp/install-3x-ui.sh
 sh /opt/tmp/install-3x-ui.sh
 ```
 
-**Внимание:** установщик предназначен для чистой установки. Полный цикл установки на новом устройстве пока не проверен. Не запускайте его поверх существующей панели.
+Установщик загружает исправленный бинарник из [релиза проекта](https://github.com/larmaxval-cpu/3x-ui-keenetic-arm64/releases/tag/v3.11.0-keenetic.1), проверяет его SHA256 и устанавливает необходимые компоненты. Перед использованием ознакомьтесь с [`install.sh`](install.sh).
 
 ## Скриншот
 
-![Панель 3x-ui на Keenetic ARM64](images/dashboard.png)
+![Работающая панель 3x-ui на Keenetic ARM64](images/dashboard.png)
 
-## Исправления
+## Что исправлено
 
 - Корректное отображение свободного места на накопителе Keenetic.
-- Исправленный перезапуск панели в среде Entware.
+- Корректный перезапуск панели в среде Entware.
 
-## Релиз
+## Управление
 
-[3x-ui v3.11.0-keenetic.1](https://github.com/larmaxval-cpu/3x-ui-keenetic-arm64/releases/tag/v3.11.0-keenetic.1)
+После установки команда управления панелью:
+
+```sh
+x-ui
+```
+
+Автозапуск выполняется через `/opt/etc/init.d/S99x-ui`.
+
+## Скачать релиз
+
+**[3x-ui v3.11.0-keenetic.1](https://github.com/larmaxval-cpu/3x-ui-keenetic-arm64/releases/tag/v3.11.0-keenetic.1)**
+
+Опубликован готовый бинарник `xui-linux-arm64` и файл контрольных сумм `SHA256SUMS`.
 
 ## Поддержать проект
 
