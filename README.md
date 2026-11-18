@@ -9,7 +9,7 @@
 
 ```sh
 opkg update
-opkg install bash curl unzip coreutils
+opkg install bash curl libcurl unzip coreutils
 mkdir -p /opt/tmp
 curl -fsSL https://raw.githubusercontent.com/larmaxval-cpu/3x-ui-keenetic-arm64/main/install.sh -o /opt/tmp/install-3x-ui.sh
 sh /opt/tmp/install-3x-ui.sh
